@@ -4,9 +4,11 @@ body { margin: 0; color: var(--ink); background: var(--bg); font: 16px/1.5 syste
 a { color: inherit; text-decoration: none; }
 h1 { margin: 0 0 1.5rem; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -.04em; }
 h2 { margin-top: 0; }
-button, input, select { min-height: 44px; border-radius: 9px; font: inherit; }
-input, select { width: 100%; padding: .7rem .8rem; border: 1px solid var(--line); background: white; }
+button, input, select, textarea { min-height: 44px; border-radius: 9px; font: inherit; }
+input, select, textarea { width: 100%; padding: .7rem .8rem; border: 1px solid var(--line); background: white; }
+textarea { resize: vertical; }
 button { border: 0; padding: .7rem 1rem; color: white; background: var(--brand); cursor: pointer; font-weight: 700; }
+button:disabled { opacity: .6; cursor: wait; }
 .primary-button, .secondary-button { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; padding: .7rem 1rem; border-radius: 9px; font-weight: 700; }
 .primary-button { color: white; background: var(--brand); }
 .secondary-button { color: var(--ink); border: 1px solid var(--line); background: white; }
@@ -63,4 +65,22 @@ nav a:hover { background: #ffffff12; }
 .stats { display: grid; grid-template-columns: repeat(2, minmax(160px, 260px)); gap: 1rem; }
 .stats .card { display: grid; }
 .stats strong { font-size: 2.5rem; }
-@media (max-width: 700px) { .shell { grid-template-columns: 1fr; } aside { position: static; } nav { display: flex; flex-wrap: wrap; margin: 1rem 0; } .account { margin: 0; } .inline-form, .form-grid { grid-template-columns: 1fr; } .page-header { align-items: flex-start; } .patient-detail { grid-template-columns: 1fr; } .patient-detail dl { grid-template-columns: 1fr; } }
+.record-callout { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; }
+.record-callout h2, .record-callout p { margin-bottom: 0; }
+.record-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+.record-summary > div { border-bottom: 1px solid var(--line); }
+.record-summary > div:first-child { display: grid; align-content: center; justify-items: center; color: white; background: var(--brand); border: 0; border-radius: 12px; padding: 1rem; }
+.record-summary > div:first-child strong { font-size: 2.5rem; }
+.record-summary span { color: var(--muted); font-size: .85rem; }
+.record-summary > div:first-child span { color: #d9eee7; }
+.record-summary p { white-space: pre-wrap; }
+.record-edit { margin-top: 1rem; }
+.record-edit summary { cursor: pointer; font-weight: 750; }
+.record-edit > form { margin-top: 1rem; box-shadow: none; }
+.section-stack { display: grid; gap: 1rem; margin-top: 1rem; }
+.section-stack h2 { margin-bottom: 0; }
+.rom-form { display: grid; grid-template-columns: 1fr 150px 1fr 110px auto; gap: .6rem; }
+.attachment-form { display: grid; grid-template-columns: 190px 1fr auto; align-items: start; gap: .6rem; }
+.attachment-form small { grid-column: 1 / -1; }
+.success-text { color: var(--brand); }
+@media (max-width: 700px) { .shell { grid-template-columns: 1fr; } aside { position: static; } nav { display: flex; flex-wrap: wrap; margin: 1rem 0; } .account { margin: 0; } .inline-form, .form-grid, .record-summary, .rom-form, .attachment-form { grid-template-columns: 1fr; } .page-header, .record-callout { align-items: flex-start; flex-direction: column; } .patient-detail { grid-template-columns: 1fr; } .patient-detail dl { grid-template-columns: 1fr; } .attachment-form small { grid-column: auto; } }

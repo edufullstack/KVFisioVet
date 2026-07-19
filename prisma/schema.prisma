@@ -20,6 +20,8 @@ model User {
   role         Role         @default(DOCTOR)
   createdAt    DateTime     @default(now())
   invitations Invitation[]
+  clinicalRecords ClinicalRecord[]
+  attachments     ClinicalAttachment[]
 }
 
 model Invitation {
@@ -60,7 +62,62 @@ model Patient {
   owner         Owner    @relation(fields: [ownerId], references: [id], onDelete: Restrict)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  clinicalRecord ClinicalRecord?
 
   @@index([name])
   @@index([ownerId])
+}
+
+model ClinicalRecord {
+  id              String               @id @default(cuid())
+  patientId       String               @unique
+  patient         Patient              @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  reason          String
+  assessment      String
+  painScore       Int
+  diagnosis       String
+  plannedProtocol String
+  createdById     String
+  createdBy       User                 @relation(fields: [createdById], references: [id])
+  romMeasurements RomMeasurement[]
+  attachments     ClinicalAttachment[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+}
+
+model RomMeasurement {
+  id        String         @id @default(cuid())
+  recordId  String
+  record    ClinicalRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  joint     String
+  side      String
+  movement  String
+  degrees   Float
+  createdAt DateTime       @default(now())
+
+  @@index([recordId])
+}
+
+enum AttachmentKind {
+  XRAY
+  BLOOD_TEST
+  VIDEO
+  OTHER
+}
+
+model ClinicalAttachment {
+  id           String         @id @default(cuid())
+  recordId     String
+  record       ClinicalRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  kind         AttachmentKind
+  originalName String
+  url          String
+  publicId     String
+  resourceType String
+  bytes        Int
+  uploadedById String
+  uploadedBy   User           @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime       @default(now())
+
+  @@index([recordId])
 }
