@@ -14,7 +14,8 @@ export async function POST(request: Request) {
       if (!invitation || invitation.usedAt || invitation.expiresAt <= new Date()) throw new Error("INVALID_INVITATION");
       const claimed = await tx.invitation.updateMany({ where: { id: invitation.id, usedAt: null }, data: { usedAt: new Date() } });
       if (claimed.count !== 1) throw new Error("INVALID_INVITATION");
-      await tx.user.create({ data: { name, email: invitation.email, passwordHash: await hashPassword(password), role: invitation.role } });
+      const user = await tx.user.create({ data: { name, email: invitation.email, passwordHash: await hashPassword(password), role: invitation.role } });
+      if (invitation.ownerId) await tx.owner.update({ where: { id: invitation.ownerId }, data: { userId: user.id } });
     });
     return Response.json({ ok: true });
   } catch {

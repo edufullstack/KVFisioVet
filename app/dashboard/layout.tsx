@@ -8,6 +8,7 @@ import { SignOutButton } from "./sign-out-button";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
+  if (session.user.role === Role.OWNER) redirect("/portal");
 
   return <div className="shell">
     <aside><Link className="brand" href="/dashboard">KV FisioVet</Link><nav>

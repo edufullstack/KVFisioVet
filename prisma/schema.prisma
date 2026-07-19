@@ -10,6 +10,7 @@ datasource db {
 enum Role {
   ADMIN
   DOCTOR
+  OWNER
 }
 
 model User {
@@ -24,6 +25,7 @@ model User {
   attachments      ClinicalAttachment[]
   therapySessions  TherapySession[]
   appliedDiscounts PatientDiscount[]
+  ownerProfile     Owner?
 }
 
 model Invitation {
@@ -36,16 +38,21 @@ model Invitation {
   createdAt   DateTime  @default(now())
   createdById String
   createdBy   User      @relation(fields: [createdById], references: [id])
+  ownerId     String?
+  owner       Owner?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
 }
 
 model Owner {
-  id        String    @id @default(cuid())
-  name      String
-  phone     String
-  email     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  patients  Patient[]
+  id          String       @id @default(cuid())
+  name        String
+  phone       String
+  email       String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  patients    Patient[]
+  userId      String?      @unique
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  invitations Invitation[]
 
   @@index([name])
   @@index([email])
@@ -81,6 +88,7 @@ model ClinicalRecord {
   painScore       Int
   diagnosis       String
   plannedProtocol String
+  visibleToOwner  Boolean              @default(false)
   createdById     String
   createdBy       User                 @relation(fields: [createdById], references: [id])
   romMeasurements RomMeasurement[]
@@ -110,18 +118,19 @@ enum AttachmentKind {
 }
 
 model ClinicalAttachment {
-  id           String         @id @default(cuid())
-  recordId     String
-  record       ClinicalRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
-  kind         AttachmentKind
-  originalName String
-  url          String
-  publicId     String
-  resourceType String
-  bytes        Int
-  uploadedById String
-  uploadedBy   User           @relation(fields: [uploadedById], references: [id])
-  createdAt    DateTime       @default(now())
+  id             String         @id @default(cuid())
+  recordId       String
+  record         ClinicalRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  kind           AttachmentKind
+  originalName   String
+  url            String
+  publicId       String
+  resourceType   String
+  bytes          Int
+  visibleToOwner Boolean        @default(false)
+  uploadedById   String
+  uploadedBy     User           @relation(fields: [uploadedById], references: [id])
+  createdAt      DateTime       @default(now())
 
   @@index([recordId])
 }
@@ -148,6 +157,7 @@ model TherapySession {
   painScore       Int
   notes           String
   nextPlan        String
+  visibleToOwner  Boolean                 @default(false)
   exercises       SessionExercise[]
   romMeasurements SessionRomMeasurement[]
   createdAt       DateTime                @default(now())

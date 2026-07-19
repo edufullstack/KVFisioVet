@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/session";
 import { DISCOUNT_PERCENTAGE, DISCOUNT_SESSION_COUNT, earnsSessionDiscount } from "@/lib/discount";
+import { Role } from "@prisma/client";
 
 async function sessionData(formData: FormData) {
   const doctorId = String(formData.get("doctorId") ?? "");
@@ -14,7 +15,7 @@ async function sessionData(formData: FormData) {
   const nextPlan = String(formData.get("nextPlan") ?? "").trim();
   const occurredAt = new Date(`${date}T12:00:00Z`);
   if (!doctorId || !date || Number.isNaN(occurredAt.getTime()) || !Number.isInteger(painScore) || painScore < 0 || painScore > 10 || !notes || !nextPlan) return null;
-  if (!(await db.user.findUnique({ where: { id: doctorId }, select: { id: true } }))) return null;
+  if (!(await db.user.findFirst({ where: { id: doctorId, role: { in: [Role.ADMIN, Role.DOCTOR] } }, select: { id: true } }))) return null;
   const requestedIds = [...new Set(formData.getAll("exerciseIds").map(String))];
   const exercises = await db.exercise.findMany({ where: { id: { in: requestedIds } }, select: { id: true } });
   return { doctorId, occurredAt, painScore, notes, nextPlan, exercises: exercises.map(({ id }) => ({ exerciseId: id, dosage: String(formData.get(`dosage-${id}`) ?? "").trim() || "Sin dosificación" })) };

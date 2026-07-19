@@ -6,6 +6,7 @@ import { Role } from "@prisma/client";
 export async function requireUser() {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
+  if (session.user.role === Role.OWNER) redirect("/portal");
   return session;
 }
 

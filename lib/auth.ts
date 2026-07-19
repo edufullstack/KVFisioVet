@@ -39,5 +39,5 @@ export const authOptions: NextAuthOptions = {
 };
 
 export function isRole(value: unknown): value is Role {
-  return value === Role.ADMIN || value === Role.DOCTOR;
+  return value === Role.ADMIN || value === Role.DOCTOR || value === Role.OWNER;
 }

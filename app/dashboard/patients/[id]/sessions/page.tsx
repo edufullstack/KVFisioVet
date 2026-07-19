@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { LineChart } from "./line-chart";
+import { LineChart } from "@/components/line-chart";
 
 const dateLabel = (date: Date) => date.toLocaleDateString("es-MX", { day: "2-digit", month: "short", timeZone: "UTC" });
 

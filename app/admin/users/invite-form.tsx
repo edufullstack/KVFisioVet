@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 
-export function InviteForm() {
+export function InviteForm({ owners }: { owners: { id: string; name: string; email: string }[] }) {
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
 
@@ -17,7 +17,8 @@ export function InviteForm() {
   }
 
   return <section className="card"><h2>Invitar usuario</h2><form className="inline-form" onSubmit={submit}>
-    <input aria-label="Correo" name="email" type="email" placeholder="correo@clinica.com" required />
-    <select aria-label="Rol" name="role"><option value="DOCTOR">Doctor/Fisio</option><option value="ADMIN">Administrador</option></select><button>Crear enlace</button>
+    <input aria-label="Correo" name="email" type="email" placeholder="correo@clinica.com" />
+    <select aria-label="Rol" name="role"><option value="DOCTOR">Doctor/Fisio</option><option value="ADMIN">Administrador</option><option value="OWNER">Propietario</option></select>
+    <select aria-label="Propietario a vincular" name="ownerId"><option value="">Propietario (solo para ese rol)</option>{owners.map((owner) => <option key={owner.id} value={owner.id}>{owner.name} · {owner.email}</option>)}</select><button>Crear enlace</button>
   </form>{error && <p className="error" role="alert">{error}</p>}{url && <div className="success"><p>Enlace válido durante 7 días:</p><input readOnly value={url} onFocus={(event) => event.currentTarget.select()} /></div>}</section>;
 }
