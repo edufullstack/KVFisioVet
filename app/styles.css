@@ -7,6 +7,11 @@ h2 { margin-top: 0; }
 button, input, select { min-height: 44px; border-radius: 9px; font: inherit; }
 input, select { width: 100%; padding: .7rem .8rem; border: 1px solid var(--line); background: white; }
 button { border: 0; padding: .7rem 1rem; color: white; background: var(--brand); cursor: pointer; font-weight: 700; }
+.primary-button, .secondary-button { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; padding: .7rem 1rem; border-radius: 9px; font-weight: 700; }
+.primary-button { color: white; background: var(--brand); }
+.secondary-button { color: var(--ink); border: 1px solid var(--line); background: white; }
+.danger-button { background: #a22f2f; }
+.danger-link { min-height: auto; padding: 0; color: #a22f2f; background: transparent; font-weight: 600; }
 .center { min-height: 100vh; display: grid; place-items: center; padding: 1rem; }
 .card { padding: 1.5rem; border: 1px solid var(--line); border-radius: 16px; background: white; box-shadow: 0 8px 30px #17352f0c; }
 .form { display: grid; gap: 1rem; width: min(100%, 420px); }
@@ -27,10 +32,35 @@ nav a:hover { background: #ffffff12; }
 .content { padding: clamp(1.5rem, 5vw, 4rem); }
 .content > * { max-width: 900px; }
 .empty { min-height: 220px; display: grid; align-content: center; }
+.page-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.page-header h1 { margin-bottom: 1rem; }
+.search { display: grid; grid-template-columns: 1fr auto; gap: .75rem; margin-bottom: 1rem; }
+.entity-form { display: grid; gap: 1rem; }
+.entity-form > label, .form-grid label { display: grid; gap: .35rem; font-weight: 650; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.actions, .row-actions { display: flex; align-items: center; gap: .75rem; }
+.row-actions form, .actions form { display: contents; }
+.muted { color: var(--muted); }
 .inline-form { display: grid; grid-template-columns: 1fr 180px auto; gap: .75rem; }
 .table { display: grid; }
 .row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--line); }
 .row span:first-child { display: grid; }
 .row small { color: var(--muted); }
 .badge { padding: .25rem .6rem; border-radius: 999px; background: #e8f5ef; color: var(--brand); font-size: .85rem; font-weight: 700; }
-@media (max-width: 700px) { .shell { grid-template-columns: 1fr; } aside { position: static; } nav { display: flex; margin: 1rem 0; } .account { margin: 0; } .inline-form { grid-template-columns: 1fr; } }
+.patient-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.patient-card { display: flex; align-items: center; gap: 1rem; }
+.patient-card img, .photo-placeholder { width: 72px; height: 72px; flex: 0 0 auto; border-radius: 14px; object-fit: cover; }
+.patient-card span { display: grid; min-width: 0; }
+.patient-card small { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.photo-placeholder { display: grid; place-items: center; color: white; background: var(--brand); font-size: 1.5rem; font-weight: 800; }
+.photo-placeholder.large { width: 220px; height: 220px; font-size: 4rem; }
+.patient-detail { display: grid; grid-template-columns: 220px 1fr; gap: 2rem; }
+.patient-detail > img { width: 220px; height: 220px; border-radius: 16px; object-fit: cover; }
+.patient-detail dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.patient-detail dl div { border-bottom: 1px solid var(--line); }
+.patient-detail dt { color: var(--muted); font-size: .85rem; }
+.patient-detail dd { margin: .2rem 0 .8rem; font-weight: 650; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(160px, 260px)); gap: 1rem; }
+.stats .card { display: grid; }
+.stats strong { font-size: 2.5rem; }
+@media (max-width: 700px) { .shell { grid-template-columns: 1fr; } aside { position: static; } nav { display: flex; flex-wrap: wrap; margin: 1rem 0; } .account { margin: 0; } .inline-form, .form-grid { grid-template-columns: 1fr; } .page-header { align-items: flex-start; } .patient-detail { grid-template-columns: 1fr; } .patient-detail dl { grid-template-columns: 1fr; } }

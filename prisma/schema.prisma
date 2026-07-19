@@ -33,3 +33,34 @@ model Invitation {
   createdById String
   createdBy   User     @relation(fields: [createdById], references: [id])
 }
+
+model Owner {
+  id        String    @id @default(cuid())
+  name      String
+  phone     String
+  email     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  patients  Patient[]
+
+  @@index([name])
+  @@index([email])
+}
+
+model Patient {
+  id            String   @id @default(cuid())
+  name          String
+  species       String
+  breed         String
+  birthDate     DateTime?
+  weightKg      Float?
+  photoUrl      String?
+  photoPublicId String?
+  ownerId       String
+  owner         Owner    @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([name])
+  @@index([ownerId])
+}

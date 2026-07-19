@@ -12,6 +12,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return <div className="shell">
     <aside><Link className="brand" href="/dashboard">KV FisioVet</Link><nav>
       <Link href="/dashboard">Inicio</Link>
+      <Link href="/dashboard/patients">Pacientes</Link>
+      <Link href="/dashboard/owners">Propietarios</Link>
       {session.user.role === Role.ADMIN && <Link href="/admin/users">Usuarios</Link>}
     </nav><div className="account"><span>{session.user.name}</span><small>{session.user.role === Role.ADMIN ? "Administrador" : "Doctor/Fisio"}</small><SignOutButton /></div></aside>
     <main className="content">{children}</main>
