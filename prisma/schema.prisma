@@ -13,27 +13,28 @@ enum Role {
 }
 
 model User {
-  id           String       @id @default(cuid())
-  name         String
-  email        String       @unique
-  passwordHash String
-  role         Role         @default(DOCTOR)
-  createdAt    DateTime     @default(now())
-  invitations Invitation[]
+  id              String               @id @default(cuid())
+  name            String
+  email           String               @unique
+  passwordHash    String
+  role            Role                 @default(DOCTOR)
+  createdAt       DateTime             @default(now())
+  invitations     Invitation[]
   clinicalRecords ClinicalRecord[]
   attachments     ClinicalAttachment[]
+  therapySessions TherapySession[]
 }
 
 model Invitation {
-  id          String   @id @default(cuid())
-  token       String   @unique
-  email       String   @unique
-  role        Role     @default(DOCTOR)
+  id          String    @id @default(cuid())
+  token       String    @unique
+  email       String    @unique
+  role        Role      @default(DOCTOR)
   expiresAt   DateTime
   usedAt      DateTime?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
   createdById String
-  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdBy   User      @relation(fields: [createdById], references: [id])
 }
 
 model Owner {
@@ -50,19 +51,20 @@ model Owner {
 }
 
 model Patient {
-  id            String   @id @default(cuid())
-  name          String
-  species       String
-  breed         String
-  birthDate     DateTime?
-  weightKg      Float?
-  photoUrl      String?
-  photoPublicId String?
-  ownerId       String
-  owner         Owner    @relation(fields: [ownerId], references: [id], onDelete: Restrict)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  clinicalRecord ClinicalRecord?
+  id              String           @id @default(cuid())
+  name            String
+  species         String
+  breed           String
+  birthDate       DateTime?
+  weightKg        Float?
+  photoUrl        String?
+  photoPublicId   String?
+  ownerId         String
+  owner           Owner            @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  clinicalRecord  ClinicalRecord?
+  therapySessions TherapySession[]
 
   @@index([name])
   @@index([ownerId])
@@ -120,4 +122,59 @@ model ClinicalAttachment {
   createdAt    DateTime       @default(now())
 
   @@index([recordId])
+}
+
+model Exercise {
+  id          String            @id @default(cuid())
+  name        String            @unique
+  category    String
+  description String?
+  sessions    SessionExercise[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([category])
+}
+
+model TherapySession {
+  id              String                  @id @default(cuid())
+  patientId       String
+  patient         Patient                 @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctorId        String
+  doctor          User                    @relation(fields: [doctorId], references: [id])
+  occurredAt      DateTime
+  painScore       Int
+  notes           String
+  nextPlan        String
+  exercises       SessionExercise[]
+  romMeasurements SessionRomMeasurement[]
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+
+  @@index([patientId, occurredAt])
+  @@index([doctorId])
+}
+
+model SessionExercise {
+  sessionId  String
+  session    TherapySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+  dosage     String
+
+  @@id([sessionId, exerciseId])
+  @@index([exerciseId])
+}
+
+model SessionRomMeasurement {
+  id        String         @id @default(cuid())
+  sessionId String
+  session   TherapySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  joint     String
+  side      String
+  movement  String
+  degrees   Float
+  createdAt DateTime       @default(now())
+
+  @@index([sessionId])
 }
