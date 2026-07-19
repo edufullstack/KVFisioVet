@@ -13,16 +13,17 @@ enum Role {
 }
 
 model User {
-  id              String               @id @default(cuid())
-  name            String
-  email           String               @unique
-  passwordHash    String
-  role            Role                 @default(DOCTOR)
-  createdAt       DateTime             @default(now())
-  invitations     Invitation[]
-  clinicalRecords ClinicalRecord[]
-  attachments     ClinicalAttachment[]
-  therapySessions TherapySession[]
+  id               String               @id @default(cuid())
+  name             String
+  email            String               @unique
+  passwordHash     String
+  role             Role                 @default(DOCTOR)
+  createdAt        DateTime             @default(now())
+  invitations      Invitation[]
+  clinicalRecords  ClinicalRecord[]
+  attachments      ClinicalAttachment[]
+  therapySessions  TherapySession[]
+  appliedDiscounts PatientDiscount[]
 }
 
 model Invitation {
@@ -65,6 +66,7 @@ model Patient {
   updatedAt       DateTime         @updatedAt
   clinicalRecord  ClinicalRecord?
   therapySessions TherapySession[]
+  discount        PatientDiscount?
 
   @@index([name])
   @@index([ownerId])
@@ -177,4 +179,24 @@ model SessionRomMeasurement {
   createdAt DateTime       @default(now())
 
   @@index([sessionId])
+}
+
+enum DiscountStatus {
+  PENDING
+  APPLIED
+}
+
+model PatientDiscount {
+  id                  String         @id @default(cuid())
+  patientId           String         @unique
+  patient             Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  percentage          Int            @default(10)
+  triggerSessionCount Int            @default(5)
+  status              DiscountStatus @default(PENDING)
+  appliedAt           DateTime?
+  appliedById         String?
+  appliedBy           User?          @relation(fields: [appliedById], references: [id])
+  createdAt           DateTime       @default(now())
+
+  @@index([status, createdAt])
 }

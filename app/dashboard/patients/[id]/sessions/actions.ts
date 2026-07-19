@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/session";
+import { DISCOUNT_PERCENTAGE, DISCOUNT_SESSION_COUNT, earnsSessionDiscount } from "@/lib/discount";
 
 async function sessionData(formData: FormData) {
   const doctorId = String(formData.get("doctorId") ?? "");
@@ -23,7 +24,12 @@ export async function createTherapySession(patientId: string, formData: FormData
   await requireUser();
   const data = await sessionData(formData);
   if (!data) redirect(`/dashboard/patients/${patientId}/sessions/new?error=Revisa+los+datos+de+la+sesión`);
-  const session = await db.therapySession.create({ data: { patientId, doctorId: data.doctorId, occurredAt: data.occurredAt, painScore: data.painScore, notes: data.notes, nextPlan: data.nextPlan, exercises: { create: data.exercises } } });
+  const session = await db.$transaction(async (tx) => {
+    const created = await tx.therapySession.create({ data: { patientId, doctorId: data.doctorId, occurredAt: data.occurredAt, painScore: data.painScore, notes: data.notes, nextPlan: data.nextPlan, exercises: { create: data.exercises } } });
+    const sessionCount = await tx.therapySession.count({ where: { patientId } });
+    if (earnsSessionDiscount(sessionCount)) await tx.patientDiscount.upsert({ where: { patientId }, update: {}, create: { patientId, percentage: DISCOUNT_PERCENTAGE, triggerSessionCount: DISCOUNT_SESSION_COUNT } });
+    return created;
+  });
   revalidatePath(`/dashboard/patients/${patientId}`);
   revalidatePath(`/dashboard/patients/${patientId}/sessions`);
   redirect(`/dashboard/patients/${patientId}/sessions/${session.id}`);
