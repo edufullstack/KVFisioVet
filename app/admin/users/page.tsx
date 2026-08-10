@@ -10,7 +10,7 @@ export default async function UsersPage() {
   if (session?.user.role !== Role.ADMIN) redirect("/dashboard");
   const [users, owners] = await Promise.all([
     db.user.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, email: true, role: true } }),
-    db.owner.findMany({ where: { userId: null }, orderBy: { name: "asc" }, select: { id: true, name: true, email: true } }),
+    db.owner.findMany({ where: { userId: null, email: { contains: "@" } }, orderBy: { name: "asc" }, select: { id: true, name: true, email: true } }),
   ]);
   const roleLabel = { ADMIN: "Admin", DOCTOR: "Doctor/Fisio", OWNER: "Propietario" } as const;
 
