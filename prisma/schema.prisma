@@ -212,14 +212,15 @@ model PatientDiscount {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String
-  price       Float
-  imageUrl    String?
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String   @unique
+  description   String
+  price         Float
+  imageUrl      String?
+  imagePublicId String?
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([active, name])
 }
