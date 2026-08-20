@@ -1,13 +1,9 @@
-import { Role } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/session";
 import { InviteForm } from "./invite-form";
 
 export default async function UsersPage() {
-  const session = await getServerSession(authOptions);
-  if (session?.user.role !== Role.ADMIN) redirect("/dashboard");
+  await requireAdmin();
   const [users, owners] = await Promise.all([
     db.user.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, email: true, role: true } }),
     db.owner.findMany({ where: { userId: null, email: { contains: "@" } }, orderBy: { name: "asc" }, select: { id: true, name: true, email: true } }),

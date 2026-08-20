@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/session";
 import { updateProduct } from "../../actions";
 import { ProductForm } from "../../product-form";
 
 export default async function EditProductPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string }> }) {
   const { id } = await params;
+  await requireAdmin();
   const { error } = await searchParams;
   const product = await db.product.findUnique({ where: { id } });
   if (!product) notFound();

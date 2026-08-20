@@ -1,23 +1,7 @@
-import Link from "next/link";
-import { Role } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
-import { SignOutButton } from "./sign-out-button";
+import { Shell } from "@/app/shell";
+import { requireUser } from "@/lib/session";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
-  if (!session) redirect("/login");
-  if (session.user.role === Role.OWNER) redirect("/portal");
-
-  return <div className="shell">
-    <aside><Link className="brand" href="/dashboard">KV FisioVet</Link><nav>
-      <Link href="/dashboard">Inicio</Link>
-      <Link href="/dashboard/patients">Pacientes</Link>
-      <Link href="/dashboard/owners">Propietarios</Link>
-      <Link href="/dashboard/exercises">Ejercicios</Link>
-      {session.user.role === Role.ADMIN && <><Link href="/admin/products">Productos</Link><Link href="/admin/users">Usuarios</Link></>}
-    </nav><div className="account"><span>{session.user.name}</span><small>{session.user.role === Role.ADMIN ? "Administrador" : "Doctor/Fisio"}</small><SignOutButton /></div></aside>
-    <main className="content">{children}</main>
-  </div>;
+  const session = await requireUser();
+  return <Shell user={session.user}>{children}</Shell>;
 }
